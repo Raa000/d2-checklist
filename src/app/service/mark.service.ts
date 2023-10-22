@@ -7,14 +7,14 @@ import {
     TagValue
 } from '@destinyitemmanager/dim-api-types';
 import { environment } from '@env/environment';
-import { IconDefinition } from '@fortawesome/pro-light-svg-icons';
-import { faCabinetFiling } from '@fortawesome/pro-regular-svg-icons';
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faBoxArchive } from '@fortawesome/free-solid-svg-icons';
 import {
     faBan,
     faBolt,
     faHeart,
     faSave as fasSave
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons';
 import { format } from 'date-fns';
 import * as LZString from 'lz-string';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -241,7 +241,7 @@ export class MarkService implements OnDestroy {
         a.push({
             label: 'Archive',
             value: 'archive',
-            icon: faCabinetFiling,
+            icon: faBoxArchive,
         });
         return a;
     }
