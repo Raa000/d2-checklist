@@ -1,6 +1,6 @@
 import { faGoogle, faPlaystation, faSteam, faWindows, faXbox } from '@fortawesome/free-brands-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
-import { IconDefinition } from '@fortawesome/pro-light-svg-icons';
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
 import { ManifestInventoryItem, SimpleInventoryItem } from './destiny-cache.service';
 
