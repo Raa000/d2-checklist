@@ -379,9 +379,37 @@ export class PandaGodrollsService implements OnDestroy {
 
   private async load(): Promise<CompleteGodRolls> {
     const prefix = 'panda-rolls';
+    const prefixClarity = 'clarity';
     const t0 = performance.now();
 
     const key = `${prefix}-${env.versions.app}`;
+    const claritykey = `${prefixClarity}-${env.versions.app}`;
+
+    let clarityStuff: ClarityDescription = await get(claritykey);
+    if(clarityStuff == null || Object.keys(clarityStuff).length == 0)
+    {
+      console.log(`'%c    No cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+
+      // clear cache
+      const ks = await keys();
+      for (const k of ks) {
+        if (k.toString().startsWith(prefixClarity)) {
+          del(k);
+        }
+      }
+      clarityStuff = await this.httpClient
+        .get<ClarityDescription>(
+          `/assets/clarity.json?v=${env.versions.app}`
+        )
+        .toPromise();
+      set(claritykey, clarityStuff);
+      console.log(`'%c    ${prefixClarity} downloaded, parsed and saved.`, LOG_CSS);
+    } 
+    else 
+    {
+      console.log(`'%c    Using cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+    }
+
     let completeGodRolls: CompleteGodRolls = await PandaGodrollsService.getCustomGodRolls();
     let customGodRolls = false;
     if (!completeGodRolls) {
@@ -459,4 +487,98 @@ export interface RollMeta {
   title: string;
   date: string; // iso date format
   manifestVersion: string;
+}
+
+
+// clarity stubbing
+
+//import { DimLanguage } from 'app/i18n';
+export const DIM_LANG_INFOS = {
+  de: { pluralOverride: false, latinBased: true },
+  en: { pluralOverride: false, latinBased: true },
+  es: { pluralOverride: false, latinBased: true },
+  'es-mx': { pluralOverride: false, latinBased: true },
+  fr: { pluralOverride: false, latinBased: true },
+  it: { pluralOverride: false, latinBased: true },
+  ja: { pluralOverride: true, latinBased: false },
+  ko: { pluralOverride: true, latinBased: false },
+  pl: { pluralOverride: true, latinBased: true },
+  'pt-br': { pluralOverride: false, latinBased: true },
+  ru: { pluralOverride: true, latinBased: false },
+  'zh-chs': { pluralOverride: true, latinBased: false },
+  'zh-cht': { pluralOverride: true, latinBased: false },
+};
+
+export type DimLanguage = keyof typeof DIM_LANG_INFOS;
+export const DIM_LANGS = Object.keys(DIM_LANG_INFOS) as DimLanguage[];
+
+export type DescriptionClassNames =
+  | 'background'
+  | 'blue'
+  | 'bold'
+  | 'breakSpaces'
+  | 'center'
+  | 'communityDescription'
+  | 'descriptionDivider'
+  | 'enhancedArrow'
+  | 'green'
+  | 'link'
+  | 'purple'
+  | 'pve'
+  | 'pvp'
+  | 'spacer'
+  | 'title'
+  | 'yellow';
+
+export interface LinesContent {
+  text?: string;
+  classNames?: DescriptionClassNames[];
+  link?: string;
+}
+export interface Line {
+  linesContent?: LinesContent[];
+  classNames?: DescriptionClassNames[];
+}
+
+/**
+ * Clarity perk
+ */
+export interface Perk {
+  /**
+   * Perk hash from inventoryItems
+   */
+  hash: number;
+  /**
+   * Perk name from inventoryItems
+   */
+  name: string;
+
+  /**
+   * Exotic armor / weapon hash from inventoryItems
+   */
+  itemHash?: number;
+  /**
+   * Exotic armor / weapon name from inventoryItems
+   */
+  itemName?: string;
+
+  descriptions: {
+    [key in DimLanguage]?: Line[];
+  };
+}
+
+export interface ClarityDescription {
+  /**
+   ** Key is always inventory item perk hash
+   */
+  [key: number]: Perk;
+}
+
+export interface ClarityVersions {
+  /**
+   ** Version format x.y
+   ** x - major version requiring update to DIM
+   ** y - minor version just simple update to description
+   */
+  descriptions: number;
 }
