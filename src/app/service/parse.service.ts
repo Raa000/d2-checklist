@@ -493,22 +493,28 @@ export class ParseService {
                             if (q.status.stepObjectives != null) {
                                 for (const o of q.status.stepObjectives) {
                                     const oDesc = await this.destinyCacheService.getObjective(o.objectiveHash);
-                                    if (oDesc.completionValue != null && oDesc.completionValue > 0) {
-                                        oPct = o.progress / oDesc.completionValue;
-                                        if (suppInfo == null && oDesc.completionValue > 1) {
-                                            suppInfo = o.progress + ' / ' + oDesc.completionValue;
-                                        } else if (oDesc.completionValue == 1) {
-                                            if (oDesc.progressDescription) {
-                                                if (
-                                                    oDesc.progressDescription.endsWith(' visited')
-                                                    || oDesc.progressDescription.toLowerCase().startsWith('speak with')
-                                                    || oDesc.progressDescription.toLowerCase().startsWith('reward collected')
-                                                    || oDesc.progressDescription.toLowerCase().endsWith('for a reward.')
-                                                ) {
-                                                    readyToCollect = true;
+                                    if (oDesc != null)
+                                    {
+                                        if(oDesc.completionValue != null && oDesc.completionValue > 0) {
+                                            oPct = o.progress / oDesc.completionValue;
+                                            if (suppInfo == null && oDesc.completionValue > 1) {
+                                                suppInfo = o.progress + ' / ' + oDesc.completionValue;
+                                            } else if (oDesc.completionValue == 1) {
+                                                if (oDesc.progressDescription) {
+                                                    if (
+                                                        oDesc.progressDescription.endsWith(' visited')
+                                                        || oDesc.progressDescription.toLowerCase().startsWith('speak with')
+                                                        || oDesc.progressDescription.toLowerCase().startsWith('reward collected')
+                                                        || oDesc.progressDescription.toLowerCase().endsWith('for a reward.')
+                                                    ) {
+                                                        readyToCollect = true;
+                                                    }
                                                 }
                                             }
                                         }
+                                    }
+                                    else {
+                                        console.log('Unable to find objective: ' + o.objectiveHash);
                                     }
                                 }
                             }
