@@ -4,7 +4,7 @@ import { environment as env } from '@env/environment';
 import { del, get, keys, set } from 'idb-keyval';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { isUndefined } from 'util';
-import { Const, InventoryItem, InventorySocket, ItemType, SelectedUser } from './model';
+import { Const, InventoryItem, InventoryPlug, InventorySocket, ItemType, SelectedUser } from './model';
 import { NotificationService } from './notification.service';
 
 const LOG_CSS = `color: mediumpurple`;
@@ -71,6 +71,10 @@ export class PandaGodrollsService implements OnDestroy {
     if (this.data != null) {
       // no need to reload
     } else {
+
+      // why does it need to do this copying of what was loaded?
+      const allClarityData = await this.load_clarity();
+
       const allRolls = await this.load();
       const temp = allRolls.rolls;
       const meta: RollMeta = {
@@ -100,6 +104,15 @@ export class PandaGodrollsService implements OnDestroy {
       console.log('%cLoaded ' + temp.length + ' panda guns.', LOG_CSS);
     }
     this.loaded$.next(true);
+  }
+
+  public static processClarityPerk(target: InventoryPlug) {
+    /*if (this.data == null) {
+      console.log('%cNo panda data present.', LOG_CSS);
+      return;
+    }*/
+
+    target.clarityDesc = "Fake Clarity Data";
   }
 
   public processItems(items: InventoryItem[]): void {
@@ -382,6 +395,7 @@ export class PandaGodrollsService implements OnDestroy {
     const t0 = performance.now();
 
     const key = `${prefix}-${env.versions.app}`;
+
     let completeGodRolls: CompleteGodRolls = await PandaGodrollsService.getCustomGodRolls();
     let customGodRolls = false;
     if (!completeGodRolls) {
@@ -422,6 +436,44 @@ export class PandaGodrollsService implements OnDestroy {
     return completeGodRolls;
   }
 
+  private async load_clarity(): Promise<ClarityData> {
+    
+    const prefixClarity = 'clarity';
+    const t0 = performance.now();
+
+    const claritykey = `${prefixClarity}-${env.versions.app}`;
+
+    let clarityData: ClarityData = await get(claritykey);
+    if(clarityData == null || Object.keys(clarityData).length == 0)
+    {
+      console.log(`'%c    No cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+
+      // clear cache
+      const ks = await keys();
+      for (const k of ks) {
+        if (k.toString().startsWith(prefixClarity)) {
+          del(k);
+        }
+      }
+      clarityData = await this.httpClient
+        .get<ClarityData>(
+          `/assets/clarity.json?v=${env.versions.app}`
+        )
+        .toPromise();
+      set(claritykey, clarityData);
+      console.log(`'%c    ${prefixClarity} downloaded, parsed and saved.`, LOG_CSS);
+    } 
+    else 
+    {
+      console.log(`'%c    Using cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+    }
+
+    const t1 = performance.now();
+    console.log(`'%c    ${t1 - t0}ms to load ClarityData`, LOG_CSS);
+
+    return clarityData;
+  }
+
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
@@ -459,4 +511,98 @@ export interface RollMeta {
   title: string;
   date: string; // iso date format
   manifestVersion: string;
+}
+
+
+// clarity stubbing
+
+//import { DimLanguage } from 'app/i18n';
+export const DIM_LANG_INFOS = {
+  de: { pluralOverride: false, latinBased: true },
+  en: { pluralOverride: false, latinBased: true },
+  es: { pluralOverride: false, latinBased: true },
+  'es-mx': { pluralOverride: false, latinBased: true },
+  fr: { pluralOverride: false, latinBased: true },
+  it: { pluralOverride: false, latinBased: true },
+  ja: { pluralOverride: true, latinBased: false },
+  ko: { pluralOverride: true, latinBased: false },
+  pl: { pluralOverride: true, latinBased: true },
+  'pt-br': { pluralOverride: false, latinBased: true },
+  ru: { pluralOverride: true, latinBased: false },
+  'zh-chs': { pluralOverride: true, latinBased: false },
+  'zh-cht': { pluralOverride: true, latinBased: false },
+};
+
+export type DimLanguage = keyof typeof DIM_LANG_INFOS;
+export const DIM_LANGS = Object.keys(DIM_LANG_INFOS) as DimLanguage[];
+
+export type DescriptionClassNames =
+  | 'background'
+  | 'blue'
+  | 'bold'
+  | 'breakSpaces'
+  | 'center'
+  | 'communityDescription'
+  | 'descriptionDivider'
+  | 'enhancedArrow'
+  | 'green'
+  | 'link'
+  | 'purple'
+  | 'pve'
+  | 'pvp'
+  | 'spacer'
+  | 'title'
+  | 'yellow';
+
+export interface LinesContent {
+  text?: string;
+  classNames?: DescriptionClassNames[];
+  link?: string;
+}
+export interface Line {
+  linesContent?: LinesContent[];
+  classNames?: DescriptionClassNames[];
+}
+
+/**
+ * Clarity perk
+ */
+export interface Perk {
+  /**
+   * Perk hash from inventoryItems
+   */
+  hash: number;
+  /**
+   * Perk name from inventoryItems
+   */
+  name: string;
+
+  /**
+   * Exotic armor / weapon hash from inventoryItems
+   */
+  itemHash?: number;
+  /**
+   * Exotic armor / weapon name from inventoryItems
+   */
+  itemName?: string;
+
+  descriptions: {
+    [key in DimLanguage]?: Line[];
+  };
+}
+
+export interface ClarityData {
+  /**
+   ** Key is always inventory item perk hash
+   */
+  [key: number]: Perk;
+}
+
+export interface ClarityVersions {
+  /**
+   ** Version format x.y
+   ** x - major version requiring update to DIM
+   ** y - minor version just simple update to description
+   */
+  descriptions: number;
 }

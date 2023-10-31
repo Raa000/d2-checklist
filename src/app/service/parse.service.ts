@@ -68,6 +68,7 @@ import {
     TriumphRecordNode, Vault, WeaponShapeLevelObjective
 } from './model';
 import { SimpleParseService } from './simple-parse.service';
+import { CompleteGodRolls, CUSTOM_GOD_ROLLS, GunRoll, GunRolls, GUN_SUFFIXES, PandaGodrollsService } from '@app/service/panda-godrolls.service';
 
 const IGNORE_WEAPON_PERK_STATS = [3511092054]; // Elemental capactor
 
@@ -3982,10 +3983,12 @@ export class ParseService {
                                 isRandomRoll = isRandomRoll || socketDesc.randomizedPlugSetHash != null;
                                 if (!isMod && reusablePlugs && reusablePlugs[index]) {
                                     for (const plug of reusablePlugs[index]) {
+
                                         const plugDesc: any = await this.destinyCacheService.getInventoryItem(plug.plugItemHash);
                                         if (plugDesc == null) { continue; }
                                         const plugName = ParseService.getPlugName(plugDesc);
                                         if (plugName == null) { continue; }
+
                                         // this is where weapon perks are added
                                         const oPlug = new InventoryPlug(plugDesc.hash,
                                             plugName, plugDesc.displayProperties.description,
@@ -3996,6 +3999,9 @@ export class ParseService {
                                             ignoreWeaponPerkStats.push(oPlug);
                                         }
                                         this.applyPlugInventoryStats(oPlug, plugDesc);
+
+                                        PandaGodrollsService.processClarityPerk(oPlug);
+
                                         if (oPlug.active && type === ItemType.Weapon) {
                                             // if (ignoreWeaponPerkStats.length > 0 && type === ItemType.Weapon) {
                                             for (const s of stats) {
