@@ -1596,6 +1596,9 @@ export class InventoryPlug {
     public inventoryStats: InventoryStat[] = [];
     public requiredLevel: number|null;
 
+    // clarity info
+    public clarityDesc: string;
+
     public getPandaRating() {
         return Math.max(this.pandaPve, this.pandaPvp);
     }

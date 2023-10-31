@@ -4,7 +4,7 @@ import { environment as env } from '@env/environment';
 import { del, get, keys, set } from 'idb-keyval';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { isUndefined } from 'util';
-import { Const, InventoryItem, InventorySocket, ItemType, SelectedUser } from './model';
+import { Const, InventoryItem, InventoryPlug, InventorySocket, ItemType, SelectedUser } from './model';
 import { NotificationService } from './notification.service';
 
 const LOG_CSS = `color: mediumpurple`;
@@ -71,6 +71,10 @@ export class PandaGodrollsService implements OnDestroy {
     if (this.data != null) {
       // no need to reload
     } else {
+
+      // why does it need to do this copying of what was loaded?
+      const allClarityData = await this.load_clarity();
+
       const allRolls = await this.load();
       const temp = allRolls.rolls;
       const meta: RollMeta = {
@@ -100,6 +104,15 @@ export class PandaGodrollsService implements OnDestroy {
       console.log('%cLoaded ' + temp.length + ' panda guns.', LOG_CSS);
     }
     this.loaded$.next(true);
+  }
+
+  public static processClarityPerk(target: InventoryPlug) {
+    /*if (this.data == null) {
+      console.log('%cNo panda data present.', LOG_CSS);
+      return;
+    }*/
+
+    target.clarityDesc = "Fake Clarity Data";
   }
 
   public processItems(items: InventoryItem[]): void {
@@ -383,32 +396,6 @@ export class PandaGodrollsService implements OnDestroy {
     const t0 = performance.now();
 
     const key = `${prefix}-${env.versions.app}`;
-    const claritykey = `${prefixClarity}-${env.versions.app}`;
-
-    let clarityStuff: ClarityDescription = await get(claritykey);
-    if(clarityStuff == null || Object.keys(clarityStuff).length == 0)
-    {
-      console.log(`'%c    No cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
-
-      // clear cache
-      const ks = await keys();
-      for (const k of ks) {
-        if (k.toString().startsWith(prefixClarity)) {
-          del(k);
-        }
-      }
-      clarityStuff = await this.httpClient
-        .get<ClarityDescription>(
-          `/assets/clarity.json?v=${env.versions.app}`
-        )
-        .toPromise();
-      set(claritykey, clarityStuff);
-      console.log(`'%c    ${prefixClarity} downloaded, parsed and saved.`, LOG_CSS);
-    } 
-    else 
-    {
-      console.log(`'%c    Using cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
-    }
 
     let completeGodRolls: CompleteGodRolls = await PandaGodrollsService.getCustomGodRolls();
     let customGodRolls = false;
@@ -448,6 +435,44 @@ export class PandaGodrollsService implements OnDestroy {
     }
 
     return completeGodRolls;
+  }
+
+  private async load_clarity(): Promise<ClarityData> {
+    
+    const prefixClarity = 'clarity';
+    const t0 = performance.now();
+
+    const claritykey = `${prefixClarity}-${env.versions.app}`;
+
+    let clarityData: ClarityData = await get(claritykey);
+    if(clarityData == null || Object.keys(clarityData).length == 0)
+    {
+      console.log(`'%c    No cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+
+      // clear cache
+      const ks = await keys();
+      for (const k of ks) {
+        if (k.toString().startsWith(prefixClarity)) {
+          del(k);
+        }
+      }
+      clarityData = await this.httpClient
+        .get<ClarityData>(
+          `/assets/clarity.json?v=${env.versions.app}`
+        )
+        .toPromise();
+      set(claritykey, clarityData);
+      console.log(`'%c    ${prefixClarity} downloaded, parsed and saved.`, LOG_CSS);
+    } 
+    else 
+    {
+      console.log(`'%c    Using cached ${prefixClarity}: ${claritykey}`, LOG_CSS);
+    }
+
+    const t1 = performance.now();
+    console.log(`'%c    ${t1 - t0}ms to load ClarityData`, LOG_CSS);
+
+    return clarityData;
   }
 
   ngOnDestroy(): void {
@@ -567,7 +592,7 @@ export interface Perk {
   };
 }
 
-export interface ClarityDescription {
+export interface ClarityData {
   /**
    ** Key is always inventory item perk hash
    */
