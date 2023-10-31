@@ -392,6 +392,7 @@ export class PandaGodrollsService implements OnDestroy {
 
   private async load(): Promise<CompleteGodRolls> {
     const prefix = 'panda-rolls';
+    const prefixClarity = 'clarity';
     const t0 = performance.now();
 
     const key = `${prefix}-${env.versions.app}`;
