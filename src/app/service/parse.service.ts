@@ -122,7 +122,8 @@ export class ParseService {
 
     ];
 
-    constructor(private destinyCacheService: DestinyCacheService) {
+    constructor(private destinyCacheService: DestinyCacheService,
+        private pandaGodRollsService: PandaGodrollsService) {
         
     }
 
@@ -4006,7 +4007,7 @@ export class ParseService {
                                         }
                                         this.applyPlugInventoryStats(oPlug, plugDesc);
 
-                                        PandaGodrollsService.processClarityPerk(oPlug);
+                                        this.pandaGodRollsService.processClarityPerk(oPlug);
 
                                         if (oPlug.active && type === ItemType.Weapon) {
                                             // if (ignoreWeaponPerkStats.length > 0 && type === ItemType.Weapon) {

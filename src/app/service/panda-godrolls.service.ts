@@ -21,6 +21,7 @@ export class PandaGodrollsService implements OnDestroy {
   public meta$: BehaviorSubject<RollMeta | null> = new BehaviorSubject(null);
 
   private data: { [name: string]: GunInfo };
+  private clarityData: { [key: number] : ClarityPerk }
   public isController = true;
   public matchLastTwoSockets = false;
   constructor(
@@ -72,9 +73,6 @@ export class PandaGodrollsService implements OnDestroy {
       // no need to reload
     } else {
 
-      // why does it need to do this copying of what was loaded?
-      const allClarityData = await this.load_clarity();
-
       const allRolls = await this.load();
       const temp = allRolls.rolls;
       const meta: RollMeta = {
@@ -103,16 +101,59 @@ export class PandaGodrollsService implements OnDestroy {
       this.data = data;
       console.log('%cLoaded ' + temp.length + ' panda guns.', LOG_CSS);
     }
+
+    if(this.clarityData != null)
+    {
+      // nothing to reload
+    }
+    else
+    {
+      // why does it need to do this copying of what was loaded?
+      const allClarityData = await this.load_clarity();
+
+      const data: { [key: number] : ClarityPerk } = {};
+      for (const [key, value] of Object.entries(allClarityData)) {
+       
+        if (data[key] == null) {
+          data[key] = value;
+        }
+      }
+      this.clarityData = data;
+      console.log('%cLoaded ' + Object.keys(allClarityData).length + ' clarity perk data.', LOG_CSS);
+    }
+
     this.loaded$.next(true);
   }
 
-  public static processClarityPerk(target: InventoryPlug) {
-    /*if (this.data == null) {
-      console.log('%cNo panda data present.', LOG_CSS);
+  public processClarityPerk(target: InventoryPlug) {
+    if (this.clarityData == null) {
+      console.log('%cNo clarity data present.', LOG_CSS);
       return;
-    }*/
+    }
 
-    target.clarityDesc = "Fake Clarity Data";
+    const key = target.hash;
+    const info = this.clarityData[key];
+    if (info == null) {
+      target.clarityDesc = "Missing";
+    }
+    else if(info.descriptions && info.descriptions["en"])
+    {
+      for(const line of info.descriptions["en"])
+      {
+        if(line.linesContent)
+        {
+          for(const content of line.linesContent)
+          {
+            target.clarityDesc += "\n" + content.text;
+          }
+        }
+        
+      }
+    }
+
+    target.desc += "\n" + target.clarityDesc;
+
+    
   }
 
   public processItems(items: InventoryItem[]): void {
@@ -568,7 +609,7 @@ export interface Line {
 /**
  * Clarity perk
  */
-export interface Perk {
+export interface ClarityPerk {
   /**
    * Perk hash from inventoryItems
    */
@@ -596,7 +637,7 @@ export interface ClarityData {
   /**
    ** Key is always inventory item perk hash
    */
-  [key: number]: Perk;
+  [key: number]: ClarityPerk;
 }
 
 export interface ClarityVersions {
