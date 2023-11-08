@@ -54,7 +54,7 @@ import { ManifestItemIconComponent } from './manifest-item-icon/manifest-item-ic
 import { HorizontalSortComponent } from '@app/gear/gear/gear-compare-dialog/horizontal-sort/horizontal-sort.component';
 import { LegendaryLostSectorComponent } from './legendary-lost-sector/legendary-lost-sector.component';
 import { LostSectorNextDaysComponent } from './lost-sector-next-days/lost-sector-next-days.component';
-import { GodRollPlugComponent } from '../gear/god-roll-plug/god-roll-plug.component';
+import { GodRollPlugComponent, MyCustomTooltipComponent } from '../gear/god-roll-plug/god-roll-plug.component';
 import { CharacterPursuitDialogComponent } from './character-pursuit-dialog/character-pursuit-dialog.component';
 
 @NgModule({
@@ -115,7 +115,8 @@ import { CharacterPursuitDialogComponent } from './character-pursuit-dialog/char
     ManifestItemIconComponent,
     LegendaryLostSectorComponent,
     LostSectorNextDaysComponent,
-    CharacterPursuitDialogComponent],
+    CharacterPursuitDialogComponent,
+    MyCustomTooltipComponent],
   exports: [
     SortIndicatorComponent,
     HorizontalSortComponent,
@@ -170,6 +171,7 @@ import { CharacterPursuitDialogComponent } from './character-pursuit-dialog/char
     SignInRequiredModule,
     MilestoneCheckModule
   ],
+  entryComponents: [MyCustomTooltipComponent],  // This is important for dynamic component creation
   providers: []
 })
 export class SharedModule {  
