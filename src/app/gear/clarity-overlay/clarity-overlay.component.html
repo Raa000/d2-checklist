@@ -1,0 +1,34 @@
+
+<mat-card class="clarity-overlay-bg">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="flex-row">
+          <div>{{plugData.name}}</div>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item >
+            <span mat-list-icon class="list-icon"
+              *ngIf="plugData.icon"
+              [style.background-image]="plugData.icon"></span>
+            <div mat-line class="clarity-wrap-text">
+              {{plugData.desc}}
+            </div>
+            <div mat-line class="clarity-wrap-text">
+              Community Insights
+            </div>
+            <div mat-line class="clarity-wrap-text">
+              {{plugData.clarityDesc}}
+            </div>
+            <!--
+            <div mat-line class="ls-details">
+              <div *ngFor="let s of n.info.shields">{{s}}</div>
+              <div *ngFor="let c of n.info.champions">{{c.name}} x {{c.count}}</div>
+            </div>
+            -->
+          </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+</mat-card>

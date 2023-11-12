@@ -2,3 +2,16 @@
     margin-left: 2px;
     margin-right: 2px;
 }
+
+.clarity-overlay-bg{
+    width: 300px;
+}
+
+.clarity-wrap-text {
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+
+    white-space: normal;
+    overflow: hidden;
+    line-height: 1.5;  /* Adjust line height as needed */
+}

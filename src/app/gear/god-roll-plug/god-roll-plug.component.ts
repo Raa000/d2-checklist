@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ElementRef, ViewChild } from '@angular/core';
 import { IconService } from '@app/service/icon.service';
 import { InventoryPlug } from '@app/service/model';
 import { NotificationService } from '@app/service/notification.service';
 import { ClipboardService } from 'ngx-clipboard';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { Overlay, OverlayRef, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 
 
@@ -12,10 +12,13 @@ import { ComponentPortal } from '@angular/cdk/portal';
 
 @Component({
   selector: 'app-my-custom-tooltip',
-  template: `<div>This is a custom tooltip with <strong>HTML</strong> content!</div>`,
-  styles: [`div { background-color: #eee; padding: 10px; border-radius: 4px; }`]
+  templateUrl: './../clarity-overlay/clarity-overlay.component.html',
+  styleUrls: ['./god-roll-plug.component.scss']
 })
-export class MyCustomTooltipComponent {}
+export class MyCustomTooltipComponent 
+{
+  @Input() plugData: InventoryPlug; 
+}
 
 
 // regular stuff
@@ -34,6 +37,8 @@ export class GodRollPlugComponent {
   
   @Input() currentLevel: number|null;
 
+  @ViewChild('tooltipTrigger', { static: true }) tooltipTrigger: ElementRef;
+
   private overlayRef: OverlayRef;
 
   constructor(
@@ -50,18 +55,27 @@ export class GodRollPlugComponent {
     this.notificationService.success('Copied ' + this.plug.name + ' to clipboard');
   }
 
-  showTooltip() {
+  showTooltip(origin: ElementRef, plugIn: InventoryPlug) {
+
     const positionStrategy = this.overlay.position()
-      .global()
-      .centerHorizontally()
-      .centerVertically(); // You'd normally position this relative to the triggering element
+      .flexibleConnectedTo(origin)
+      .withPositions([
+        {
+          originX: 'start',
+          originY: 'center',
+          overlayX: 'end',
+          overlayY: 'center',
+        },
+      ]);
 
     this.overlayRef = this.overlay.create({
       positionStrategy,
+      hasBackdrop: false
     });
 
     const customTooltipPortal = new ComponentPortal(MyCustomTooltipComponent);
-    this.overlayRef.attach(customTooltipPortal);
+    const tooltipInstance = this.overlayRef.attach(customTooltipPortal);
+    tooltipInstance.instance.plugData = plugIn;
   }
 
   hideTooltip() {
