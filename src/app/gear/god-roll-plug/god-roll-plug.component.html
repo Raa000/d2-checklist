@@ -10,7 +10,6 @@
     <i *ngIf="plug.pandaPve>0" class="icon-strike perk" [class.accent-text]="plug.pandaPve>1"
       [matTooltip]="plug.pandaPve>1?'This is the best PVE perk for this weapon':'This is a good PVE perk for this weapon'"></i>
     <span #tooltipTrigger 
-      [matTooltip]="plug.desc" 
       matTooltipClass="preserve-white-space" 
       (mouseenter)="showTooltip(tooltipTrigger, plug)" 
       (mouseleave)="hideTooltip()">

@@ -134,7 +134,7 @@ export class PandaGodrollsService implements OnDestroy {
     const key = target.hash;
     const info = this.clarityData[key];
     if (info == null) {
-      target.clarityDesc = "Missing";
+      target.clarityDesc = null;
     }
     else if(info.descriptions && info.descriptions["en"])
     {
@@ -151,7 +151,7 @@ export class PandaGodrollsService implements OnDestroy {
       }
     }
 
-    target.desc += "\n" + target.clarityDesc;
+    //target.desc += "\n" + target.clarityDesc;
 
     
   }

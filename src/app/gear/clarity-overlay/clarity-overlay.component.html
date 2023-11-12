@@ -1,34 +1,33 @@
 
 <mat-card class="clarity-overlay-bg">
-    <mat-card-header>
-      <mat-card-title>
-        <div class="flex-row">
-          <div>{{plugData.name}}</div>
-        </div>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item >
-            <span mat-list-icon class="list-icon"
-              *ngIf="plugData.icon"
-              [style.background-image]="plugData.icon"></span>
-            <div mat-line class="clarity-wrap-text">
-              {{plugData.desc}}
-            </div>
-            <div mat-line class="clarity-wrap-text">
-              Community Insights
-            </div>
-            <div mat-line class="clarity-wrap-text">
-              {{plugData.clarityDesc}}
-            </div>
+
+  <h3 mat-dialog-title>{{plugData.name}}</h3>
+  <div mat-dialog-content>
+
+    <span mat-list-icon class="list-icon"
+      *ngIf="plugData.icon"
+      [style.background-image]="plugData.icon">
+    </span>
+
+      <div class="simple-caption-darker add-wrap">{{plugData.desc}}</div>
+
+      <ng-container *ngIf="plugData.clarityDesc">
+          <div class="flex-row">
+            <h5 class="community-header">Community Insights</h5>
+            <p class="simple-caption-darker add-wrap">{{plugData.clarityDesc}}</p>
             <!--
-            <div mat-line class="ls-details">
-              <div *ngFor="let s of n.info.shields">{{s}}</div>
-              <div *ngFor="let c of n.info.champions">{{c.name}} x {{c.count}}</div>
-            </div>
+              <div class="flex-column" *ngIf="data.title as i">
+                <div *ngFor="let r of i.values">
+                    <img *ngIf="r.icon" [src]="'//www.bungie.net' + r.icon" class="reward-icon"
+                        loading="lazy">
+                    <span class="pad-left">
+                        <ng-container *ngIf="r.quantity>0">{{r.quantity}} </ng-container>{{r.name}}
+                    </span>
+                </div>
+              </div>
             -->
-          </mat-list-item>
-      </mat-list>
-    </mat-card-content>
+          </div>
+      </ng-container>
+  </div>
+
 </mat-card>
