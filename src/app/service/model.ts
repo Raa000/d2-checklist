@@ -3,6 +3,7 @@ import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
 import { ManifestInventoryItem, SimpleInventoryItem } from './destiny-cache.service';
+import { Line } from './panda-godrolls.service';
 
 
 export const BUCKET_ID_VAULT = 'vault';
@@ -1598,6 +1599,7 @@ export class InventoryPlug {
 
     // clarity info
     public clarityDesc: string;
+    public rawClarityDescLines: Line[];
 
     public getPandaRating() {
         return Math.max(this.pandaPve, this.pandaPvp);

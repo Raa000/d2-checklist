@@ -1,4 +1,7 @@
 
+// Yellow used for enhanced weapon perks
+$enhancedYellow: #f3cf55;
+
 .perk{
     margin-left: 2px;
     margin-right: 2px;
@@ -25,3 +28,83 @@
     margin-top: 20px;
     margin-bottom: 4px;
 }
+
+
+/* stylelint-disable selector-class-pattern */
+.communityDescription {
+    h3 {
+      margin: 0;
+      font-size: inherit;
+    }
+    p {
+      margin: 0;
+    }
+  }
+  
+  // --- colors
+  .pvp {
+    color: hsl(0, 100%, 80%);
+  }
+  .pve {
+    color: hsl(220, 100%, 75%);
+  }
+  .green {
+    color: hsl(116, 58%, 65%);
+  }
+  .yellow {
+    color: hsl(51, 100%, 45%);
+  }
+  .blue {
+    color: hsl(180, 100%, 45%);
+  }
+  .purple {
+    color: hsl(300, 100%, 81%);
+  }
+  
+  // copy pasted from src/app/item-popup/PlugTooltip.m.scss
+  .enhancedArrow {
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 11px;
+      //mask-image: url('assets/enhancedArrow.svg');
+      background-color: $enhancedYellow;
+      margin-right: 3px;
+    }
+  }
+  
+  // --- random styling
+  .center {
+    text-align: center;
+  }
+  .descriptionDivider {
+    margin-top: 3px;
+    padding-bottom: 3px;
+    border-top: 1px solid #ccc;
+  }
+  .spacer {
+    padding-top: 5px;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .background {
+    background-color: hsla(0, 0%, 100%, 0.17);
+  }
+  .title {
+    text-decoration: underline;
+  }
+  .link {
+    a:link {
+      color: hsl(201, 100%, 65%);
+    }
+    a:visited {
+      color: hsl(201, 100%, 65%);
+    }
+  }
+  
+  .breakSpaces {
+    white-space: break-spaces;
+  }
+  

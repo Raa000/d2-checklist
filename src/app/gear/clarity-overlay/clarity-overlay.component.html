@@ -14,7 +14,24 @@
       <ng-container *ngIf="plugData.clarityDesc">
           <div class="flex-row">
             <h5 class="community-header">Community Insights</h5>
+            <!--
             <p class="simple-caption-darker add-wrap">{{plugData.clarityDesc}}</p>
+            -->
+
+            <div [ngClass]="joinClassNames(line.classNames)" *ngFor="let line of plugData.rawClarityDescLines; let i = index">
+              <ng-container *ngFor="let linesContent of line.linesContent; let j = index">
+                <span [ngClass]="joinClassNames(linesContent.classNames)">
+                  <ng-container *ngIf="linesContent.link; else formattedText">
+                    <ExternalLink href={linesContent.link}>{{linesContent.text}}</ExternalLink>
+                  </ng-container>
+                  <ng-template #formattedText>
+                    <span [innerHTML]="applyFormatting(linesContent.text)"></span>
+                  </ng-template>
+                </span>
+              </ng-container>
+            </div>
+            
+
             <!--
               <div class="flex-column" *ngIf="data.title as i">
                 <div *ngFor="let r of i.values">

@@ -135,9 +135,12 @@ export class PandaGodrollsService implements OnDestroy {
     const info = this.clarityData[key];
     if (info == null) {
       target.clarityDesc = null;
+      target.rawClarityDescLines = null;
     }
     else if(info.descriptions && info.descriptions["en"])
     {
+      target.rawClarityDescLines = info.descriptions["en"];
+
       for(const line of info.descriptions["en"])
       {
         if(line.linesContent)
@@ -147,7 +150,6 @@ export class PandaGodrollsService implements OnDestroy {
             target.clarityDesc += "\n" + content.text;
           }
         }
-        
       }
     }
 
