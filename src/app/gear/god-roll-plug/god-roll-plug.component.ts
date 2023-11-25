@@ -86,3 +86,31 @@ export class GodRollPlugComponent {
 
 }
 
+
+
+//******************************************** */
+// from DIM
+//******************************************** */
+interface CssExports {
+  'background': string;
+  'blue': string;
+  'bold': string;
+  'breakSpaces': string;
+  'center': string;
+  'communityDescription': string;
+  'descriptionDivider': string;
+  'enhancedArrow': string;
+  'green': string;
+  'link': string;
+  'purple': string;
+  'pve': string;
+  'pvp': string;
+  'spacer': string;
+  'title': string;
+  'yellow': string;
+}
+export const cssExports: CssExports;
+export default cssExports;
+
+
+
