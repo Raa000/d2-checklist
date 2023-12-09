@@ -107,25 +107,28 @@ const ClarityStyles = {
     applyFormatting(text: string): SafeHtml {
       const segments: TextSegment[] = [];
       let lastIndex = 0;
-  
-      const matches = [...text.matchAll(boldTextRegEx)];
-  
-      matches.forEach(match => {
-        // Add the text before the match
-        if (match.index > lastIndex) {
-          segments.push({ type: 'text', content: text.substring(lastIndex, match.index) });
+
+      if(text)
+      {
+        const matches = [...text.matchAll(boldTextRegEx)];
+    
+        matches.forEach(match => {
+          // Add the text before the match
+          if (match.index > lastIndex) {
+            segments.push({ type: 'text', content: text.substring(lastIndex, match.index) });
+          }
+    
+          // Add the bold text
+          //segments.push({ type: 'bold', content: this.sanitizer.bypassSecurityTrustHtml('<b>' + match[0] + '</b>') });
+          segments.push({ type: 'bold', content: '<b>' + match[0] + '</b>' });
+    
+          lastIndex = match.index + match[0].length;
+        });
+    
+        // Add any remaining text after the last match
+        if (lastIndex < text.length) {
+          segments.push({ type: 'text', content: text.substring(lastIndex) });
         }
-  
-        // Add the bold text
-        //segments.push({ type: 'bold', content: this.sanitizer.bypassSecurityTrustHtml('<b>' + match[0] + '</b>') });
-        segments.push({ type: 'bold', content: '<b>' + match[0] + '</b>' });
-  
-        lastIndex = match.index + match[0].length;
-      });
-  
-      // Add any remaining text after the last match
-      if (lastIndex < text.length) {
-        segments.push({ type: 'text', content: text.substring(lastIndex) });
       }
   
       // Combine the segments into a single string
