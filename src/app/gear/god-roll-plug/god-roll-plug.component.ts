@@ -21,6 +21,7 @@ export class GodRollPlugComponent {
   @Input() debugmode: boolean;
   
   @Input() currentLevel: number|null;
+  @Input() isActive: boolean;
 
   @ViewChild('tooltipTrigger', { static: true }) tooltipTrigger: ElementRef;
 

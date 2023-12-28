@@ -127,6 +127,11 @@
     box-shadow: 0 0 5px 0px mat.get-color-from-palette($accent, 700);
   }
 
+  .selected-perk-bg {
+    background: mat.get-color-from-palette($background, unselected-chip);
+    //border: solid 2px   mat.get-color-from-palette($background, unselected-chip);
+  }
+
   .warn-text {
     color: mat.get-color-from-palette($warn) !important;
   }
